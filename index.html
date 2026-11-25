@@ -1,0 +1,465 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Progress Tracker</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #171c38, #29245b);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 550px;
+    background: #ffffff12;
+    backdrop-filter: blur(15px);
+    border: 1px solid #ffffff25;
+    border-radius: 25px;
+    padding: 30px;
+    box-shadow: 0 15px 50px #0005;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #b9c2e5;
+    margin-bottom: 30px;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-weight: bold;
+    gap: 10px;
+}
+
+.percentage {
+    color: #68f5cf;
+}
+
+.progress-bg {
+    height: 18px;
+    background: #ffffff20;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 20px;
+    background: linear-gradient(90deg, #00e5ff, #7b61ff, #ff54b5);
+    transition: width 0.5s ease;
+    box-shadow: 0 0 15px #7b61ff;
+}
+
+.rank-box {
+    text-align: center;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 14px;
+    background: #ffffff10;
+    border: 1px solid #ffffff20;
+}
+
+.rank {
+    font-size: 22px;
+    font-weight: bold;
+    color: #68f5cf;
+}
+
+.rank-info {
+    font-size: 12px;
+    color: #b9c2e5;
+    margin-top: 5px;
+}
+
+.lessons {
+    display: grid;
+    gap: 12px;
+}
+
+.lesson {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: #ffffff10;
+    border: 1px solid #ffffff15;
+    transition: 0.25s;
+    cursor: pointer;
+}
+
+.lesson:hover {
+    background: #ffffff20;
+    transform: translateX(5px);
+}
+
+.lesson input {
+    width: 19px;
+    height: 19px;
+    accent-color: #68f5cf;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.lesson span {
+    margin-left: 13px;
+    font-size: 15px;
+}
+
+.lesson.done {
+    background: #00e5a015;
+    border-color: #00e5a055;
+}
+
+.lesson.done span {
+    text-decoration: line-through;
+    color: #8cf5d5;
+}
+
+.lesson.locked {
+    cursor: not-allowed;
+    opacity: 0.75;
+}
+
+.lesson.locked input {
+    cursor: not-allowed;
+}
+
+.reset, .done-btn {
+    width: 100%;
+    margin-top: 25px;
+    padding: 13px;
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.reset {
+    background: linear-gradient(90deg, #ff5470, #ff758c);
+}
+
+.done-btn {
+    margin-top: 12px;
+    background: linear-gradient(90deg, #00cba9, #00e5ff);
+    box-shadow: 0 0 12px #00e5ff35;
+}
+
+.reset:hover, .done-btn:hover {
+    opacity: 0.85;
+}
+
+.result {
+    display: none;
+    text-align: center;
+    margin-top: 18px;
+    padding: 15px;
+    border-radius: 12px;
+    background: #00e5ff15;
+    border: 1px solid #00e5ff55;
+    color: #8cf5d5;
+    font-weight: bold;
+    line-height: 1.8;
+}
+
+.footer {
+    text-align: center;
+    color: #aeb7db;
+    font-size: 12px;
+    margin-top: 20px;
+}
+
+/* Mobile compatibility */
+@media (max-width: 600px) {
+    body {
+        padding: 12px;
+        align-items: flex-start;
+    }
+
+    .container {
+        padding: 20px 16px;
+        border-radius: 20px;
+        margin: auto 0;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    .subtitle {
+        font-size: 13px;
+        margin-bottom: 24px;
+    }
+
+    .lesson {
+        padding: 13px 12px;
+    }
+
+    .lesson span {
+        font-size: 14px;
+    }
+
+    .rank {
+        font-size: 20px;
+    }
+
+    .stats {
+        font-size: 13px;
+    }
+
+    .reset, .done-btn {
+        padding: 15px;
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 360px) {
+    .container {
+        padding: 16px 12px;
+    }
+
+    .stats {
+        font-size: 12px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>📚 Study Tracker</h1>
+<p class="subtitle">15 Lessons • One Goal • Success!</p>
+
+<div class="rank-box">
+    <div class="rank" id="rank">🥉 Beginner</div>
+    <div class="rank-info" id="rankInfo">
+        Complete 5 lessons to upgrade your rank!
+    </div>
+</div>
+
+<div class="stats">
+    <span id="count">0 / 15 Completed</span>
+    <span class="percentage" id="percent">0%</span>
+</div>
+
+<div class="progress-bg">
+    <div class="progress-fill" id="bar"></div>
+</div>
+
+<div class="lessons" id="lessons"></div>
+
+<button class="reset" onclick="resetProgress()">
+    ↻ Reset Progress
+</button>
+
+<button class="done-btn" onclick="showDone()">
+    ✓ Done
+</button>
+
+<div class="result" id="result"></div>
+
+<div class="footer">
+    Keep going! Every lesson brings you closer to success ✨
+</div>
+
+</div>
+
+<script>
+const total = 15;
+
+let locked = JSON.parse(
+    localStorage.getItem("lockedLessons") || "[]"
+);
+
+let confirmed = localStorage.getItem("confirmed") === "true";
+
+const lessons = document.getElementById("lessons");
+
+function createLessons() {
+    lessons.innerHTML = "";
+
+    for (let i = 1; i <= total; i++) {
+        const done = localStorage.getItem("lesson" + i) === "true";
+        const isLocked = confirmed && locked.includes(i);
+
+        lessons.innerHTML += `
+            <label class="lesson ${done ? 'done' : ''} ${isLocked ? 'locked' : ''}">
+                <input type="checkbox"
+                    ${done ? 'checked' : ''}
+                    ${isLocked ? 'disabled' : ''}
+                    onchange="updateLesson(${i}, this)">
+                <span>Lesson ${i} ${isLocked ? '🔒' : ''}</span>
+            </label>
+        `;
+    }
+}
+
+function updateLesson(number, checkbox) {
+    if (confirmed) {
+        // Hide confirmation and unlock all lessons
+        confirmed = false;
+        locked = [];
+
+        localStorage.setItem("confirmed", "false");
+        localStorage.setItem("lockedLessons", JSON.stringify([]));
+
+        document.getElementById("result").style.display = "none";
+    }
+
+    localStorage.setItem("lesson" + number, checkbox.checked);
+
+    createLessons();
+    updateProgress();
+}
+
+function getCompleted() {
+    let completed = 0;
+
+    for (let i = 1; i <= total; i++) {
+        if (localStorage.getItem("lesson" + i) === "true") {
+            completed++;
+        }
+    }
+
+    return completed;
+}
+
+function updateProgress() {
+    const completed = getCompleted();
+    const percentage = Math.round((completed / total) * 100);
+
+    document.getElementById("count").textContent =
+        `${completed} / ${total} Completed`;
+
+    document.getElementById("percent").textContent =
+        percentage + "%";
+
+    document.getElementById("bar").style.width =
+        percentage + "%";
+
+    let rank, info;
+
+    if (completed === 15) {
+        rank = "🏆 Master";
+        info = "All lessons completed! 🌟";
+    } else if (completed >= 10) {
+        rank = "🥇 Advanced";
+        info = `${15 - completed} lessons left to become Master! 🎯`;
+    } else if (completed >= 5) {
+        rank = "🥈 Intermediate";
+        info = `${10 - completed} lessons left to become Advanced! 🔥`;
+    } else {
+        rank = "🥉 Beginner";
+        info = `${5 - completed} lessons left to upgrade! 🚀`;
+    }
+
+    document.getElementById("rank").textContent = rank;
+    document.getElementById("rankInfo").textContent = info;
+}
+
+function showDone() {
+    const completed = getCompleted();
+
+    // Lock all currently completed lessons
+    locked = [];
+
+    for (let i = 1; i <= total; i++) {
+        if (localStorage.getItem("lesson" + i) === "true") {
+            locked.push(i);
+        }
+    }
+
+    confirmed = true;
+
+    localStorage.setItem("lockedLessons", JSON.stringify(locked));
+    localStorage.setItem("confirmed", "true");
+
+    let message;
+
+    if (completed === 0) {
+        message = "🚀 Go on!";
+    } else if (completed <= 4) {
+        message = "💪 Keep moving!";
+    } else if (completed <= 9) {
+        message = "🔥 Almost there!";
+    } else if (completed <= 13) {
+        message = "🎯 Really close!";
+    } else if (completed === 14) {
+        message = "⚡ One more step!";
+    } else {
+        message = "🏆 Well done! You reached the goal! ⭐";
+    }
+
+    const result = document.getElementById("result");
+
+    result.style.display = "block";
+    result.innerHTML = `
+        ${completed} / ${total} Lessons Done<br>
+        ${message}
+    `;
+
+    createLessons();
+}
+
+function resetProgress() {
+    if (confirm("Are you sure you want to reset all progress?")) {
+        for (let i = 1; i <= total; i++) {
+            localStorage.removeItem("lesson" + i);
+        }
+
+        localStorage.removeItem("lockedLessons");
+        localStorage.removeItem("confirmed");
+
+        location.reload();
+    }
+}
+
+createLessons();
+updateProgress();
+
+if (confirmed) {
+    const completed = getCompleted();
+    let message;
+
+    if (completed === 0) message = "🚀 Go on!";
+    else if (completed <= 4) message = "💪 Keep moving!";
+    else if (completed <= 9) message = "🔥 Almost there!";
+    else if (completed <= 13) message = "🎯 Really close!";
+    else if (completed === 14) message = "⚡ One more step!";
+    else message = "🏆 Well done! You reached the goal! ⭐";
+
+    document.getElementById("result").style.display = "block";
+    document.getElementById("result").innerHTML =
+        `${completed} / ${total} Lessons Done<br>${message}`;
+}
+</script>
+
+</body>
+</html>
